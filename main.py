@@ -1,5 +1,4 @@
 import pygame
-import os
 from pathlib import Path
 
 # test folder (music/audio files)
@@ -17,7 +16,7 @@ def Find_Audio_Files(folder_path: Path):
 
 # playing the selected music
 def Play_Music(file_path: Path):
-    print(f"({file_path.name})playing...")
+    print(f"({file_path.name}) playing...")
 
     try:
         pygame.mixer.music.load(str(file_path))
@@ -48,23 +47,28 @@ def main():
         return
     
     # show audio files
-    print("== MUSIC FILES ==")
-    for i in range(len(audio_files)):
-        print(i+1,') ',audio_files[i].name)
+    running = True
+    while running:
+        print("== MUSIC FILES ==")
+        for i in range(len(audio_files)):
+            print(i+1,') ',audio_files[i].name)
 
-    while True:
-        try: choice = int(input("Enter number to play: "))
-        except:
-            print("invaled input (try again)")
-            continue
+        while True:
+            try: choice = int(input("Enter number to play (0 -> quit): "))
+            except:
+                print("invaled input (try again)")
+                continue
 
-        if 0 < choice <= len(audio_files):
-            selected_file = audio_files[choice-1]
-            Play_Music(selected_file)
-            break
-        else:
-            print("out of list (try again)")
-            continue
+            if choice == 0 :
+                running = False
+                break
+            elif 0 < choice <= len(audio_files):
+                selected_file = audio_files[choice-1]
+                Play_Music(selected_file)
+                break
+            else:
+                print("out of list (try again)")
+                continue
         
 
 
