@@ -6,60 +6,77 @@ MUSIC_FOLDER = Path("music")
 # audio file extensions
 AUDIO_EXTENSIONS = {'.mp3', '.wav', '.ogg', '.flac', '.m4a', '.aac', '.wma'}
 
+
 # finding audio files inside the folder
-def Find_Audio_Files(folder_path: Path):
+def Find_Audio_Files(folder_path: Path) -> list:
     audio_files = []
     for file in folder_path.iterdir():
         if file.is_file() and file.suffix.lower() in AUDIO_EXTENSIONS:
             audio_files.append(file)
     return sorted(audio_files)
 
+
 # playing the selected music
 def Play_Music(file_path: Path):
-    print(f"({file_path.name}) playing...")
-
+    
     try:
         pygame.mixer.music.load(str(file_path))
         pygame.mixer.music.play()
-
-        # wiat until music finishes
+        # wait until music finishes
         while pygame.mixer.music.get_busy():
             pygame.time.Clock().tick(10)
+        
     except pygame.error as Error:
-        print(f"cant play this audio (ERROR: {Error})")
+        return f"cant play this audio (ERROR: {Error})"
 
-# main program
-def main():
-    # check if test folder exist 
+
+
+# init main program
+def main_init():
+    try:
+        pygame.mixer.init()
+    except (pygame.error, OSError) as Error:
+        return f"Could not initialize the Music (ERROR: {Error})"
+
+
+# finalise main program
+def main_final():    
+    pygame.mixer.quit()
+
+    
+# test main program
+def test():
+    # check if test folder exist
     if not MUSIC_FOLDER.is_dir():
         print(f"Folder '{MUSIC_FOLDER}' dose not exist.")
         return
-    
+
     # making a list of audio files (path)
     try:
         audio_files = Find_Audio_Files(MUSIC_FOLDER)
     except OSError as Error:
         print(f"somthing went wrong (ERROR: {Error})")
         return
-    
+
     if not audio_files:
         print("No Audio files were found")
         return
-    
+
     # show audio files
     running = True
     while running:
         print("== MUSIC FILES ==")
         for i in range(len(audio_files)):
-            print(i+1,') ',audio_files[i].name)
+            print(i+1, ') ', audio_files[i].name)
 
         while True:
-            try: choice = int(input("Enter number to play (0 -> quit): "))
+            try:
+                choice = int(input("Enter number to play (0 -> quit): "))
             except:
                 print("invaled input (try again)")
                 continue
 
-            if choice == 0 :
+            if choice == 0:
                 running = False
                 break
             elif 0 < choice <= len(audio_files):
@@ -69,18 +86,10 @@ def main():
             else:
                 print("out of list (try again)")
                 continue
-        
 
 
 ### STARTING MUSIC BOX ###
 if __name__ == "__main__":
-    try:
-        pygame.mixer.init()
-        main()
-    except pygame.error as Error:
-        print(f"Could not initialize the Music (ERROR: {Error})")
-    except OSError as Error:
-            print(f"Could not initialize the Music (ERROR: {Error})")
-
-    finally:
-        pygame.mixer.quit()
+        main_init()
+        test()
+        main_final()
