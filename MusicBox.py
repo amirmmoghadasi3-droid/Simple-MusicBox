@@ -1,5 +1,5 @@
 from main import Find_Audio_Files, main_final, main_init, MUSIC_FOLDER
-from mainWindow import main_Window, sub_Window
+from gui_menu import main_Window, sub_Window
 
 init_error_massage = main_init()
 
